@@ -1,7 +1,7 @@
 # TicTacToeProject
 
 Link to Github:
-    https://github.com/ardo1488/TicTacToeProject.git
+    https://github.com/ardo1488/TicTacToeProject
 
 
 How to run: 
