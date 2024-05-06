@@ -2,15 +2,15 @@ import { useState } from 'react';
 
 function Square({ value, onSquareClick }) {
   return (
-    <button className="square" onClick={onSquareClick}>
-      <span className='symbol'>{value}</span>
+    <button className="square" onClick={onSquareClick}>  
+      <span className='symbol'>{value}</span> 
     </button>
   );
 }
 
 function Board({ xIsNext, squares, onPlay }) {
-  function handleClick(i) {
-    if (calculateWinner(squares) || squares[i]) {
+  function handleClick(i) {     // handles squareclick. i is the index of square
+    if (calculateWinner(squares) || squares[i]) { // if there is winner or button already clicked do nothing
       return;
     }
     const nextSquares = squares.slice();
@@ -20,19 +20,28 @@ function Board({ xIsNext, squares, onPlay }) {
       nextSquares[i] = 'O';
     }
     onPlay(nextSquares);
+
   }
+
+  
 
   const winner = calculateWinner(squares);
   let status;
-  if (winner) {
-    status = 'Winner: ' + winner;
+  let statusClass = "status";
+  if (winner) { // there is a winner change statusClass
+    status = winner + ' WINS!';
+    statusClass = "winner";
+  } else if (squares.every(square => square !== null)){ // checks if there is a null
+    status = 'DRAW...';
+    statusClass = "draw";
   } else {
-    status = 'Next player: ' + (xIsNext ? 'X' : 'O');
+    status = 'Next player: ' + (xIsNext ? 'X' : 'O'); // no winner
   }
+
 
   return (
     <>
-      <div className="status">{status}</div>
+      <div className={statusClass}>{status}</div>
       <div className="entire-board">
         <div className="board-row">
           <Square value={squares[0]} onSquareClick={() => handleClick(0)} />
@@ -66,23 +75,10 @@ export default function Game() {
     setCurrentMove(nextHistory.length - 1);
   }
 
-  function jumpTo(nextMove) {
-    setCurrentMove(nextMove);
+  function restartGame() {
+    setCurrentMove(0);
   }
 
-  const moves = history.map((squares, move) => {
-    let description;
-    if (move > 0) {
-      description = 'Go to move #' + move;
-    } else {
-      description = 'Go to game start';
-    }
-    return (
-      <li key={move}>
-        <button onClick={() => jumpTo(move)}>{description}</button>
-      </li>
-    );
-  });
 
   return (
     <div className="game">
@@ -90,13 +86,13 @@ export default function Game() {
         <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
       </div>
       <div className="game-info">
-        <ol>{moves}</ol>
+      <button className='restart' onClick={restartGame}>Restart Game</button>
       </div>
     </div>
   );
 }
 
-function calculateWinner(squares) {
+function calculateWinner(squares) { // calculates winners and compares to any of these results
   const lines = [
     [0, 1, 2],
     [3, 4, 5],
